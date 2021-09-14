@@ -8,32 +8,32 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     SetupGame();
 
     PrintLine(TEXT("The HiddenWord is: %s."), *HiddenWord); // Debug Line
-
-    // Wecoming the Player
-    PrintLine(TEXT("Welcome to the Bull Cows!"));
-    PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len()); // Magic Number Remove!
-    PrintLine(TEXT("Type in your guess and press enter to continue..."));
-
-    // Prompt Player for Guess
 }
 
 void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
 {
-    ClearScreen();
-
-    // Checking PlayerGuess
-    if (Input == HiddenWord)
+    if (bGameOver)
     {
-        PrintLine(TEXT("You have Won!"));
+        ClearScreen();
+        SetupGame();
     }
-    else
+    else // Checking PlayerGuess
     {
-        if (Input.Len() != HiddenWord.Len())
+        if (Input == HiddenWord)
         {
-            PrintLine(TEXT("The Hidden Word is %i characters long, try again!"), HiddenWord.Len());
+            PrintLine(TEXT("You have Won!"));
+            EndGame();
         }
-        PrintLine(TEXT("You have Lost!"));
+        else
+        {
+            if (Input.Len() != HiddenWord.Len())
+            {
+                PrintLine(TEXT("The Hidden Word is %i characters long. \nYou have lost!"), HiddenWord.Len());
+                EndGame();
+            }
+        }
     }
+
     // Check if isogram
     // Prompt to Guess Again
     // Check if right # of characters
@@ -52,6 +52,19 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
 
 void UBullCowCartridge::SetupGame()
 {
+    // Wecoming the Player
+    PrintLine(TEXT("Welcome to the Bull Cows!"));
+
     HiddenWord = TEXT("cakes");
     Lives = 4;
+    bGameOver = false;
+
+    PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len()); // Magic Number Remove!
+    PrintLine(TEXT("Type in your guess. \nPress enter to continue...")); // Prompt Player for Guess
+}
+
+void UBullCowCartridge::EndGame()
+{
+    bGameOver = true;
+    PrintLine(TEXT("Press enter to play again."));
 }
