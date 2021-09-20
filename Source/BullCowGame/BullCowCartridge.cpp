@@ -6,21 +6,14 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
 
+    PrintLine(TEXT("The starting of words is %i."), Words.Num()); // Debug Line
+
     SetupGame();
 
-    PrintLine(TEXT("The number of possible words is %i."), Words.Num());
     PrintLine(TEXT("The HiddenWord is: %s."), *HiddenWord); // Debug Line
-
-    for (int32 Index = 0; Index != 10; Index++)
-    {
-        if (Words[Index].Len() >=4 && Words[Index].Len() <=8)
-        {
-            PrintLine(TEXT("%s"), *Words[Index]);
-        }
-    }
 }
 
-void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
+void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player hits enter
 {
     if (bGameOver)
     {
@@ -29,7 +22,7 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
     }
     else // Checking PlayerGuess
     {
-        ProcessGuess(Input);
+        ProcessGuess(PlayerInput);
     }
 
 }
@@ -54,7 +47,7 @@ void UBullCowCartridge::EndGame()
     PrintLine(TEXT("\nPress enter to play again."));
 }
 
-void UBullCowCartridge::ProcessGuess(FString Guess)
+void UBullCowCartridge::ProcessGuess(const FString& Guess)
 {
     if (Guess == HiddenWord)
     {
@@ -94,7 +87,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     PrintLine(TEXT("Guess again, you have %i lives left"), Lives);
 }
 
-bool UBullCowCartridge::IsIsogram(FString Word) const
+bool UBullCowCartridge::IsIsogram(const FString& Word) const
 {
     for (int32 Index = 0; Index < Word.Len(); Index++)
     {
@@ -108,3 +101,19 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
     }
     return true;
 }
+
+TArray<FString> UBullCowCartridge::GetValidWords(const TArray<FString>& WordList) const
+{
+    TArray<FString> RightLengthWords;
+
+    for (int32 Index = 0; Index < WordList.Num(); Index++)
+    {
+        if (WordList[Index].Len() >= 4 && WordList[Index].Len() <=8)
+        {
+            RightLengthWords.Emplace(WordList[Index]);
+        }
+    }
+
+    PrintLine(TEXT("Right length words: %i."), RightLengthWords.Num());
+    return RightLengthWords;
+} 
